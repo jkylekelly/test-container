@@ -35,6 +35,13 @@ jobs:
         with:
           project_id: ${{ env.GCP_PROJECT_ID }}
           workload_identity_provider: ${{ env.GCP_WIP }}
+          service_account: cicd-1@main-entropy-469304-f4.iam.gserviceaccount.com
+
+      - name: Show active gcloud account
+        run: gcloud auth list
+
+      - name: Show access token info
+        run: gcloud auth print-access-token | xargs -I {} gcloud auth describe {}
 
       # Use docker/login-action for Artifact Registry
       - name: Login to Google Artifact Registry
