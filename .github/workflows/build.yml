@@ -45,14 +45,6 @@ jobs:
       - name : Configure GCP project
         run: gcloud auth configure-docker europe-west1-docker.pkg.dev
 
-      # # Use docker/login-action for Artifact Registry
-      # - name: Login to Google Artifact Registry
-      #   uses: docker/login-action@v3
-      #   with:
-      #     registry: ${{ env.REGISTRY }}
-      #     username: oauth2accesstoken
-      #     password: ${{ steps.gcp_auth.outputs.auth_token }}
-
       - name: Build and push Docker image
         id: docker_build_push
         uses: docker/build-push-action@v6
@@ -62,6 +54,15 @@ jobs:
           push: true
           tags: europe-west1-docker.pkg.dev/main-entropy-469304-f4/test-provenance/test-container:latest
 
+
+      # Use docker/login-action for Artifact Registry
+      - name: Login to Google Artifact Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: oauth2accesstoken
+          password: ${{ steps.gcp_auth.outputs.auth_token }}
+          
       - name: Generate artifact attestation
         uses: actions/attest-build-provenance@v2
         with:
