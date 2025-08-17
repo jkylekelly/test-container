@@ -35,6 +35,7 @@ jobs:
         with:
           project_id: ${{ env.GCP_PROJECT_ID }}
           workload_identity_provider: ${{ env.GCP_WIP }}
+          service_account: gha-cloudrun-deployer@main-entropy-469304-f4.iam.gserviceaccount.com
 
       # Use docker/login-action for Artifact Registry
       - name: Login to Google Artifact Registry
