@@ -1,43 +1,62 @@
-name: Push container to GHCR
+name: Build and attest image
 
 on:
   push:
-    branches:
-      - main
   workflow_dispatch:
 
+permissions:
+  id-token: write
+  contents: write
+  attestations: write
+
+env:
+  REGISTRY: europe-west1-docker.pkg.dev
+  IMAGE_NAME: main-entropy-469304-f4/test-provenance/test-container
+  GCP_PROJECT_ID: main-entropy-469304-f4
+  GCP_WIP: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+
 jobs:
-  push_to_registry:
-    name: Push container to GHCR
+  build:
     runs-on: ubuntu-latest
-    permissions:
-      packages: write
-      contents: read
-      attestations: write
-      id-token: write
+
     steps:
-      - name: Check out the repo
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Log in to GHCR
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: GCP Auth
+        id: gcp_auth
+        uses: google-github-actions/auth@v2
+        with:
+          project_id: ${{ env.GCP_PROJECT_ID }}
+          workload_identity_provider: ${{ env.GCP_WIP }}
+
+      # Use docker/login-action for Artifact Registry
+      - name: Login to Google Artifact Registry
         uses: docker/login-action@v3
         with:
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-          registry: ghcr.io
+          registry: ${{ env.REGISTRY }}
+          username: oauth2accesstoken
+          password: ${{ steps.gcp_auth.outputs.access_token }}
 
       - name: Build and push Docker image
-        id: push
+        id: docker_build_push
         uses: docker/build-push-action@v6
         with:
           context: .
           file: ./Dockerfile
           push: true
-          tags: ghcr.io/${{ github.repository_owner }}/test-container:latest
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+          platforms: linux/amd64,linux/arm64
 
       - name: Generate artifact attestation
         uses: actions/attest-build-provenance@v2
         with:
-          subject-name: ghcr.io/${{ github.repository_owner }}/test-container
-          subject-digest: ${{ steps.push.outputs.digest }}
+          subject-name: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          subject-digest: ${{ steps.docker_build_push.outputs.digest }}
           push-to-registry: true
