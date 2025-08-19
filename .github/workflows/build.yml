@@ -11,7 +11,7 @@ permissions:
 
 env:
   REGISTRY: europe-west1-docker.pkg.dev
-  IMAGE_NAME: main-entropy-469304-f4/test-provenance/test-container
+  IMAGE_NAME: test-provenance/test-container
   GCP_PROJECT_ID: main-entropy-469304-f4
   GCP_WIP: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
 
@@ -51,11 +51,11 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: europe-west1-docker.pkg.dev/main-entropy-469304-f4/test-provenance/test-container:latest
+          tags: europe-west1-docker.pkg.dev/test-provenance/test-container:latest
 
       - name: Generate artifact attestation
         uses: actions/attest-build-provenance@v2
         with:
-          subject-name: europe-west1-docker.pkg.dev/main-entropy-469304-f4/test-provenance/test-container
+          subject-name: europe-west1-docker.pkg.dev/test-provenance/test-container
           subject-digest: ${{ steps.docker_build_push.outputs.digest }}
           push-to-registry: true
