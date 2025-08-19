@@ -38,20 +38,13 @@ jobs:
           service_account: gha-cloudrun-deployer@main-entropy-469304-f4.iam.gserviceaccount.com
           access_token_lifetime: 300s
 
-      # - name: Login to Artifact Registry
-      #   uses: docker/login-action@v3
-      #   with:
-      #     registry: europe-west1-docker.pkg.dev
-      #     username: oauth2accesstoken
-      #     password: ${{ steps.auth.outputs.access_token }}
-
-      - name: GCP Auth
-        id: gcp_auth
-        uses: google-github-actions/auth@v2
+      - name: Login to Artifact Registry
+        uses: docker/login-action@v3
         with:
-          project_id: ${{ env.GCP_PROJECT_ID }}
-          workload_identity_provider: "projects/371170618631/locations/global/workloadIdentityPools/ghpool/providers/github-provider"
-
+          registry: europe-west1-docker.pkg.dev
+          username: oauth2accesstoken
+          password: ${{ steps.auth.outputs.access_token }}
+          
       # - name: setup gcloud
       #   uses: google-github-actions/setup-gcloud@v2
       #   with:
