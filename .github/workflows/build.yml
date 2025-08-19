@@ -43,15 +43,15 @@ jobs:
         with:
           registry: europe-west1-docker.pkg.dev
           username: oauth2accesstoken
-          password: ${{ steps.auth.outputs.auth_token }}
+          password: ${{ steps.auth.outputs.access_token }}
           
-      # - name: setup gcloud
-      #   uses: google-github-actions/setup-gcloud@v2
-      #   with:
-      #     project_id: main-entropy-469304-f4
+      - name: setup gcloud
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          project_id: main-entropy-469304-f4
 
-      # - name : Configure GCP project
-      #   run: gcloud auth configure-docker europe-west1-docker.pkg.dev
+      - name : Configure GCP project
+        run: gcloud auth configure-docker europe-west1-docker.pkg.dev
 
       - name: Build and push Docker image
         id: docker_build_push
