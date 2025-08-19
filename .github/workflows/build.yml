@@ -43,9 +43,10 @@ jobs:
           registry: ${{ env.REGISTRY }}
           username: oauth2accesstoken
           password: ${{ steps.gcp_auth.outputs.auth_token }}
-      
-      - name: Show Docker config
-        run: cat ~/.docker/config.json
+
+      - name: Configure Docker to use gcloud for Artifact Registry
+          run: gcloud auth configure-docker europe-west1-docker.pkg.dev
+
 
       - name: Build and push Docker image
         id: docker_build_push
