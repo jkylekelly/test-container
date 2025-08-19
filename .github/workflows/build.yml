@@ -31,7 +31,7 @@ jobs:
 
       - id: auth
         name: Authenticate with Google Cloud
-        uses: google-github-actions/auth@v0
+        uses: google-github-actions/auth@v2
         with:
           token_format: access_token
           workload_identity_provider: projects/371170618631/locations/global/workloadIdentityPools/ghpool/providers/github-provider
@@ -39,7 +39,7 @@ jobs:
           access_token_lifetime: 300s
 
       - name: Login to Artifact Registry
-        uses: docker/login-action@v1
+        uses: docker/login-action@v3
         with:
           registry: europe-west1-docker.pkg.dev
           username: oauth2accesstoken
@@ -69,7 +69,7 @@ jobs:
           file: ./Dockerfile
           push: true
           tags: europe-west1-docker.pkg.dev/main-entropy-469304-f4/test-provenance/test-container:latest
-        
+
       - name: Generate artifact attestation
         uses: actions/attest-build-provenance@v2
         with:
