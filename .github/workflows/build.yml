@@ -45,13 +45,12 @@ jobs:
       #     username: oauth2accesstoken
       #     password: ${{ steps.auth.outputs.access_token }}
 
-      # - name: GCP Auth
-      #   id: gcp_auth
-      #   uses: google-github-actions/auth@v2
-      #   with:
-      #     project_id: ${{ env.GCP_PROJECT_ID }}
-      #     workload_identity_provider: "projects/371170618631/locations/global/workloadIdentityPools/ghpool/providers/github-provider"
-      #     service_account: gha-cloudrun-deployer@main-entropy-469304-f4.iam.gserviceaccount.com
+      - name: GCP Auth
+        id: gcp_auth
+        uses: google-github-actions/auth@v2
+        with:
+          project_id: ${{ env.GCP_PROJECT_ID }}
+          workload_identity_provider: "projects/371170618631/locations/global/workloadIdentityPools/ghpool/providers/github-provider"
 
       # - name: setup gcloud
       #   uses: google-github-actions/setup-gcloud@v2
