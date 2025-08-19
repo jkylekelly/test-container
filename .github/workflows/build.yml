@@ -37,14 +37,14 @@ jobs:
       - name : Configure GCP project
         run: gcloud auth configure-docker europe-west1-docker.pkg.dev
 
-      - id: auth
-        name: Authenticate with Google Cloud
-        uses: google-github-actions/auth@v2
-        with:
-          token_format: access_token
-          workload_identity_provider: projects/371170618631/locations/global/workloadIdentityPools/ghpool/providers/github-provider
-          service_account: gha-cloudrun-deployer@main-entropy-469304-f4.iam.gserviceaccount.com
-          access_token_lifetime: 300s
+      # - id: auth
+      #   name: Authenticate with Google Cloud
+      #   uses: google-github-actions/auth@v2
+      #   with:
+      #     token_format: access_token
+      #     workload_identity_provider: projects/371170618631/locations/global/workloadIdentityPools/ghpool/providers/github-provider
+      #     service_account: gha-cloudrun-deployer@main-entropy-469304-f4.iam.gserviceaccount.com
+      #     access_token_lifetime: 300s
 
       - name: Login to Artifact Registry
         uses: docker/login-action@v3
