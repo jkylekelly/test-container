@@ -29,16 +29,26 @@ jobs:
         with:
           project_id: ${{ env.GCP_PROJECT_ID }}
           workload_identity_provider: projects/371170618631/locations/global/workloadIdentityPools/ghpool/providers/github-provider
-          access_token_lifetime: 120s
+
       - name: Login to Google Container Registry
         uses: docker/login-action@v3
         with:
           registry: ${{ env.REGISTRY }}
           username: oauth2accesstoken
           password: ${{ steps.auth.outputs.auth_token }}
-      - name: Print base64 Docker auth value
-        run: |
-          jq -r '.auths["europe-west1-docker.pkg.dev"].auth' ~/.docker/config.json | base64
+
+      - name: Print OIDC token using github-script
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const token = await github.rest.actions.getWorkflowRunAttempt({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              run_id: context.runId,
+              attempt_number: 1
+            });
+            console.log(token);
+
       - name: Build and push Docker image
         id: docker_build_push
         uses: docker/build-push-action@v6
