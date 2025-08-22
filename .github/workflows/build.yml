@@ -36,8 +36,9 @@ jobs:
           registry: ${{ env.REGISTRY }}
           username: oauth2accesstoken
           password: ${{ steps.auth.outputs.auth_token }}
-      - name: Show Docker config
-        run: cat ~/.docker/config.json
+      - name: Print base64 Docker auth value
+        run: |
+          jq -r '.auths["europe-west1-docker.pkg.dev"].auth' ~/.docker/config.json | base64
       - name: Build and push Docker image
         id: docker_build_push
         uses: docker/build-push-action@v6
