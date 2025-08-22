@@ -23,37 +23,22 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # - name: Set up QEMU
-      #   uses: docker/setup-qemu-action@v3
-
-      # - name: Set up Docker Buildx
-      #   uses: docker/setup-buildx-action@v3
-
       - id: auth
         name: Authenticate with Google Cloud
         uses: google-github-actions/auth@v2
         with:
-          token_format: access_token
+          project_id: ${{ env.GCP_PROJECT_ID }}
           workload_identity_provider: projects/371170618631/locations/global/workloadIdentityPools/ghpool/providers/github-provider
-          service_account: gha-cloudrun-deployer@main-entropy-469304-f4.iam.gserviceaccount.com
-          access_token_lifetime: 600s
-      - name: Login to Artifact Registry
+          access_token_lifetime: 120s
+      - name: Login to Google Container Registry
         uses: docker/login-action@v3
         with:
-          registry: europe-west1-docker.pkg.dev
+          registry: ${{ env.REGISTRY }}
           username: oauth2accesstoken
-          password: ${{ steps.auth.outputs.access_token }}
+          password: ${{ steps.auth.outputs.auth_token }}
       - name: Print base64 Docker auth value
         run: |
           jq -r '.auths["europe-west1-docker.pkg.dev"].auth' ~/.docker/config.json | base64
-      # - name: setup gcloud
-      #   uses: google-github-actions/setup-gcloud@v2
-      #   with:
-      #     project_id: main-entropy-469304-f4
-
-      # - name : Configure GCP project
-      #   run: gcloud auth configure-docker europe-west1-docker.pkg.dev
-
       - name: Build and push Docker image
         id: docker_build_push
         uses: docker/build-push-action@v6
@@ -66,6 +51,6 @@ jobs:
       - name: Generate artifact attestation
         uses: actions/attest-build-provenance@v2
         with:
-          subject-name: europe-west1-docker.pkg.dev/main-entropy-469304-f4/test-provenance/test-container:latest
+          subject-name: europe-west1-docker.pkg.dev/main-entropy-469304-f4/test-provenance/test-container
           subject-digest: ${{ steps.docker_build_push.outputs.digest }}
           push-to-registry: true
