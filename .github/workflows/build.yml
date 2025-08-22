@@ -37,7 +37,8 @@ jobs:
           workload_identity_provider: projects/371170618631/locations/global/workloadIdentityPools/ghpool/providers/github-provider
           service_account: gha-cloudrun-deployer@main-entropy-469304-f4.iam.gserviceaccount.com
           access_token_lifetime: 30s
-
+      - name: Show Docker config
+        run: cat ~/.docker/config.json
       - name: Login to Artifact Registry
         uses: docker/login-action@v3
         with:
