@@ -37,17 +37,14 @@ jobs:
           username: oauth2accesstoken
           password: ${{ steps.auth.outputs.auth_token }}
 
-      - name: Print OIDC token using github-script
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const token = await github.rest.actions.getWorkflowRunAttempt({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              run_id: context.runId,
-              attempt_number: 1
-            });
-            console.log(token);
+      - name: Print OIDC token creation and expiration
+        run: |
+          TOKEN="${{ steps.auth.outputs.id_token }}"
+          PAYLOAD=$(echo "$TOKEN" | cut -d '.' -f2 | base64 -d 2>/dev/null)
+          echo "Creation time (iat):"
+          echo "$PAYLOAD" | jq .iat
+          echo "Expiration (exp):"
+          echo "$PAYLOAD" | jq .exp
 
       - name: Build and push Docker image
         id: docker_build_push
