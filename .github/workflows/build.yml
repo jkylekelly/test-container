@@ -39,7 +39,7 @@ jobs:
 
       - name: Print OIDC token creation and expiration
         run: |
-          TOKEN="${{ steps.auth.outputs.id_token }}"
+          TOKEN="${{ steps.oidc.outputs.id_token }}"
           PAYLOAD=$(echo "$TOKEN" | cut -d '.' -f2 | base64 -d 2>/dev/null)
           echo "Creation time (iat):"
           echo "$PAYLOAD" | jq .iat
