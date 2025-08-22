@@ -29,8 +29,9 @@ jobs:
         with:
           project_id: ${{ env.GCP_PROJECT_ID }}
           workload_identity_provider: projects/371170618631/locations/global/workloadIdentityPools/ghpool/providers/github-provider
-
-      # We cannot use gcloud auth configure-docker because it is not supported by actions/attest-build-provenance
+          access_token_lifetime: 30s
+      - name: Show Docker config
+        run: cat ~/.docker/config.json
       - name: Login to Google Container Registry
         uses: docker/login-action@v3
         with:
